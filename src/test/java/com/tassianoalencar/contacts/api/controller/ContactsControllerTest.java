@@ -8,8 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,5 +63,42 @@ class ContactsControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("phoneNumber")));
+    }
+
+    @Test
+    public void shouldReturnNotFoundContact() throws Exception {
+        String id = "999999999";
+
+        mockMvc.perform(get(BASE_URL + "/" + id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldUpdateContact() throws Exception {
+        String id = "1";
+        String mockJsonContact = "{\"name\": \"Person Updated\", \"phoneNumber\": \"99099887766\"}";
+
+        mockMvc.perform(
+                put(BASE_URL + "/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mockJsonContact))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get(BASE_URL + "/" + id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("{\"id\":1,\"name\":\"Person Updated\",\"phoneNumber\":\"99099887766\"}")))
+                .andExpect(content().string(containsString("Person Updated")));
+    }
+
+    @Test
+    public void shouldRemoveContact() throws Exception {
+        String id = "1";
+
+        mockMvc.perform(delete(BASE_URL + "/" + id))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }

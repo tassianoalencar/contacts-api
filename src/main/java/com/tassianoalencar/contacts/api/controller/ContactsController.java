@@ -58,4 +58,31 @@ public class ContactsController {
 
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid ContactRequest contactRequest) {
+        Optional<Contact> contact = contactRepository.findById(id);
+
+        if (contact.isPresent()) {
+            contact.get().setName(contactRequest.getName());
+            contact.get().setPhoneNumber(contactRequest.getPhoneNumber());
+            return ResponseEntity.ok(new ContactResponse(contact.get()));
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        Optional<Contact> contact = contactRepository.findById(id);
+
+        if (contact.isPresent()) {
+            contactRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
