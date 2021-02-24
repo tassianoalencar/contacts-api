@@ -18,12 +18,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ContactsControllerTest {
 
+    private final String BASE_URL = "/api/v1/contacts";
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     public void shouldReturnContacts() throws Exception {
-        mockMvc.perform(get("/api/v1/contacts"))
+        mockMvc.perform(get(BASE_URL))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("phoneNumber")));
@@ -34,11 +36,10 @@ class ContactsControllerTest {
         String mockJsonContactInvalid = "{\"name\": \"Person Name\", \"phoneNumber\": \"\"}";
 
         mockMvc.perform(
-                post("/api/v1/contacts")
+                post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mockJsonContactInvalid))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-
     }
 }
