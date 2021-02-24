@@ -42,4 +42,27 @@ class ContactsControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturnTheLastContactWhenCreated() throws Exception {
+        String mockJsonContact = "{\"name\": \"Person Name\", \"phoneNumber\": \"99099887766\"}";
+
+        mockMvc.perform(
+                post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mockJsonContact))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("99099887766")));
+    }
+
+    @Test
+    public void shouldReturnTheContactById() throws Exception {
+        String id = "1";
+
+        mockMvc.perform(get(BASE_URL + "/" + id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("phoneNumber")));
+    }
 }

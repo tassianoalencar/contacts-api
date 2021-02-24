@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/contacts")
@@ -44,5 +45,17 @@ public class ContactsController {
 
         URI uri = uriComponentsBuilder.path("/api/v1/contacts/{id}").buildAndExpand(contact.getId()).toUri();
         return ResponseEntity.created(uri).body(new ContactResponse(contact));
+    }
+
+    @GetMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> details(@PathVariable Long id) {
+        Optional<Contact> contact = contactRepository.findById(id);
+
+        if (contact.isPresent()) {
+            return ResponseEntity.ok(new ContactResponse(contact.get()));
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
