@@ -17,6 +17,10 @@ public class ContactResponse {
         this.phoneNumber = contact.getPhoneNumber();
     }
 
+    public static List<ContactResponse> convert(Page<Contact> contacts) {
+        return contacts.stream().map(ContactResponse::new).collect(Collectors.toList());
+    }
+
     public Long getId() {
         return id;
     }
@@ -27,9 +31,5 @@ public class ContactResponse {
 
     public String getPhoneNumber() {
         return phoneNumber;
-    }
-
-    public static List<ContactResponse> convert(Page<Contact> contacts) {
-        return contacts.stream().map(ContactResponse::new).collect(Collectors.toList());
     }
 }
